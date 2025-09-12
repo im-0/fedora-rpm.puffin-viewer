@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Puffin Viewer
+Comment=Viewer GUI for puffin profiler data.
+Exec=/usr/bin/puffin_viewer
+Icon=puffin_viewer
+Terminal=false
+Categories=Utility;Development;
+Keywords=puffin;
+MimeType=text/plain;
