@@ -1,5 +1,5 @@
-%global commit          32499573b89246385373b6288295fff830154635
-%global checkout_date   20250912
+%global commit          c5276b9d5264af37a9c9fb2655990a3a0b720a0b
+%global checkout_date   20250917
 %global short_commit    %(c=%{commit}; echo ${c:0:7})
 %global snapshot        .%{checkout_date}git%{short_commit}
 
@@ -16,7 +16,10 @@ Source0:    https://github.com/EmbarkStudios/puffin/archive/%{commit}/puffin-%{c
 # Contains puffin-$COMMIT/vendor/*.
 Source1:    puffin-%{commit}.cargo-vendor.tar.xz
 Source2:    config.toml
-Source3:    puffin-viewer.desktop
+Source3:    com.github.EmbarkStudios.puffin.puffin_viewer.desktop
+
+Patch0:     0001-Add-application-ID.patch
+Patch1:     0001-Support-closing-puffin_viewer-using-Command-Q-and-Co.patch
 
 ExclusiveArch:  %{rust_arches}
 
@@ -36,6 +39,9 @@ Viewer GUI for puffin profiler data
 %prep
 %setup -q -D -T -b0 -n puffin-%{commit}
 %setup -q -D -T -b1 -n puffin-%{commit}
+
+%patch -P 0 -p 1
+%patch -P 1 -p 1
 
 mkdir .cargo
 cp %{SOURCE2} .cargo/
@@ -57,7 +63,10 @@ mkdir -p %{buildroot}%{_datadir}/pixmaps
 mkdir -p %{buildroot}%{_datadir}/applications
 mv target/release/puffin_viewer \
         %{buildroot}/%{_bindir}/
-install -Dm644 puffin_viewer/icon.png %{buildroot}%{_datadir}/pixmaps/puffin_viewer.png
+install \
+		-Dm644 \
+		puffin_viewer/icon.png \
+		%{buildroot}%{_datadir}/pixmaps/com.github.EmbarkStudios.puffin.puffin_viewer.png
 desktop-file-install \
 		--dir=%{buildroot}%{_datadir}/applications \
 		%{SOURCE3}
@@ -65,8 +74,8 @@ desktop-file-install \
 
 %files
 %{_bindir}/puffin_viewer
-%{_datadir}/pixmaps/puffin_viewer.png
-%{_datadir}/applications/puffin-viewer.desktop
+%{_datadir}/pixmaps/com.github.EmbarkStudios.puffin.puffin_viewer.png
+%{_datadir}/applications/com.github.EmbarkStudios.puffin.puffin_viewer.desktop
 
 
 %changelog

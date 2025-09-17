@@ -1,0 +1,40 @@
+From d0d4b542fc5ee0705ce6060eaca274199110a011 Mon Sep 17 00:00:00 2001
+From: Ivan Mironov <mironov.ivan@gmail.com>
+Date: Wed, 17 Sep 2025 08:24:34 +0200
+Subject: [PATCH] Support closing puffin_viewer using Command-Q and Command-W
+
+---
+ puffin_viewer/src/lib.rs | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/puffin_viewer/src/lib.rs b/puffin_viewer/src/lib.rs
+index f6ae1c470a14..0b89bd81a2c3 100644
+--- a/puffin_viewer/src/lib.rs
++++ b/puffin_viewer/src/lib.rs
+@@ -177,6 +177,15 @@ impl PuffinViewer {
+         });
+     }
+ 
++    #[cfg(not(target_arch = "wasm32"))]
++    fn ui_kbd_shortcuts_quit(&mut self, ctx: &egui::Context) {
++        if ctx.input(|i| {
++            i.modifiers.command && (i.key_pressed(egui::Key::Q) || i.key_pressed(egui::Key::W))
++        }) {
++            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
++        }
++    }
++
+     fn ui_file_drag_and_drop(&mut self, ctx: &egui::Context) {
+         use egui::*;
+ 
+@@ -224,6 +233,7 @@ impl eframe::App for PuffinViewer {
+         #[cfg(not(target_arch = "wasm32"))]
+         {
+             self.ui_menu_bar(ctx);
++            self.ui_kbd_shortcuts_quit(ctx);
+         }
+ 
+         #[cfg(target_arch = "wasm32")]
+-- 
+2.51.0
+
